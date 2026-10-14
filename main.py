@@ -10,54 +10,51 @@ st.set_page_config(
 # 2. 다크 & 세련된 네온 글래스모피즘 CSS 스타일 정의
 st.markdown("""
     <style>
-    /* 전체 배경: 딥 블랙/칠흑색 계열 */
+    /* 전체 배경: 딥 블랙 계열 */
     .stApp {
         background: #090A0F;
         color: #F0F0F0;
         font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
     }
     
-    /* 메인 타이틀: 화려한 금빛 네온 그라데이션 */
-    .hero-title {
-        font-size: 2.8rem !important;
-        font-weight: 900;
+    /* 포켓몬 로고 컨테이너 */
+    .logo-container {
         text-align: center;
-        background: linear-gradient(135deg, #FFE066 0%, #F59E0B 50%, #D97706 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
         margin-top: 10px;
-        margin-bottom: 5px;
-        letter-spacing: -1px;
+        margin-bottom: 10px;
     }
     
+    .logo-img {
+        max-width: 280px;
+        filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.4));
+    }
+    
+    /* 서브 타이틀 */
     .hero-subtitle {
-        font-size: 1.25rem !important;
+        font-size: 1.2rem !important;
         color: #9CA3AF;
         text-align: center;
-        margin-bottom: 2.5rem;
+        margin-bottom: 2rem;
         font-weight: 400;
     }
 
     /* 프리미엄 다크 글래스 카드 */
     .pokemon-card {
-        background: rgba(22, 27, 38, 0.75);
-        border: 1px solid rgba(245, 158, 11, 0.3);
+        background: rgba(22, 27, 38, 0.85);
+        border: 1px solid rgba(245, 158, 11, 0.35);
         border-radius: 24px;
-        padding: 30px;
+        padding: 26px;
         backdrop-filter: blur(16px);
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 25px rgba(245, 158, 11, 0.12);
-        margin-top: 10px;
-        transition: all 0.3s ease;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 25px rgba(245, 158, 11, 0.15);
     }
 
-    /* 포켓몬 타이틀 & 은은한 광채 */
+    /* 포켓몬 이름 */
     .pokemon-name {
         font-size: 2.3rem !important;
-        font-weight: 800;
+        font-weight: 900;
         color: #FFFFFF;
         letter-spacing: -0.5px;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
     }
 
     /* 태그 / 서브 텍스트 */
@@ -66,21 +63,21 @@ st.markdown("""
         background: rgba(245, 158, 11, 0.15);
         color: #FBBF24;
         border: 1px solid rgba(245, 158, 11, 0.4);
-        padding: 4px 14px;
+        padding: 6px 16px;
         border-radius: 50px;
         font-size: 0.95rem;
         font-weight: 600;
         margin-bottom: 18px;
     }
 
-    /* 본문 텍스트 */
+    /* 본문 텍스트 박스 */
     .info-box {
-        background: rgba(255, 255, 255, 0.03);
-        border-left: 3px solid #F59E0B;
+        background: rgba(255, 255, 255, 0.04);
+        border-left: 4px solid #F59E0B;
         padding: 14px 18px;
-        border-radius: 8px;
-        font-size: 1.1rem !important;
-        line-height: 1.7;
+        border-radius: 10px;
+        font-size: 1.08rem !important;
+        line-height: 1.65;
         color: #E5E7EB;
         margin-top: 12px;
     }
@@ -94,7 +91,7 @@ st.markdown("""
 
     /* 입력 폼 라벨 및 선택 상자 다크 커스텀 */
     label {
-        font-size: 1.25rem !important;
+        font-size: 1.2rem !important;
         font-weight: 700 !important;
         color: #F3F4F6 !important;
         margin-bottom: 8px !important;
@@ -116,12 +113,12 @@ st.markdown("""
         border-radius: 14px !important;
         border: none !important;
         padding: 12px 24px !important;
-        box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3) !important;
+        box-shadow: 0 4px 20px rgba(245, 158, 11, 0.35) !important;
         transition: all 0.2s ease-in-out !important;
     }
     .stButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 25px rgba(245, 158, 11, 0.5) !important;
+        box-shadow: 0 6px 25px rgba(245, 158, 11, 0.55) !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -258,9 +255,15 @@ POKEMON_DATA = {
     }
 }
 
-# 4. 앱 헤더 레이아웃
-st.markdown('<div class="hero-title">⚡ MBTI x POKÉMON</div>', unsafe_allow_html=True)
-st.markdown('<div class="hero-subtitle">나만의 성향과 가장 완벽하게 어울리는 포켓몬 파트너를 찾아보세요.</div>', unsafe_allow_html=True)
+# 4. 앱 헤더 레이아웃 (포켓몬 로고 포함)
+st.markdown('''
+    <div class="logo-container">
+        <img class="logo-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" style="width: 32px; vertical-align: middle; margin-right: 8px;">
+        <img class="logo-img" src="https://upload.wikimedia.org/wikipedia/commons/9/98/International_Pok%C3%A9mon_logo.svg" alt="Pokémon Logo">
+    </div>
+''', unsafe_allow_html=True)
+
+st.markdown('<div class="hero-subtitle">나만의 성향(MBTI)과 완벽하게 어울리는 포켓몬 파트너를 찾아보세요!</div>', unsafe_allow_html=True)
 
 # MBTI 드롭다운 선택
 mbti_list = list(POKEMON_DATA.keys())
@@ -286,19 +289,7 @@ if st.button("✨ 단짝 포켓몬 매칭하기 ✨", use_container_width=True):
         st.image(p_data["image"], use_container_width=True)
         
     with col2:
-        st.markdown(f'''
-        <div class="pokemon-card">
-            <div class="pokemon-name">{p_data["ko_name"]}</div>
-            <div class="type-badge">{p_data["en_name"]}  |  {p_data["type"]}</div>
-            
-            <div class="info-box">
-                <span class="info-label">⚡ 주요 특징</span>
-                {p_data["traits"]}
-            </div>
-            
-            <div class="info-box">
-                <span class="info-label">💛 {selected_mbti} 타입과의 매칭 이유</span>
-                {p_data["reason"]}
-            </div>
-        </div>
-        ''', unsafe_allow_html=True)
+        # HTML 태그 사이의 불필요한 줄바꿈을 없애 깨짐 현상 방지
+        html_content = f'''<div class="pokemon-card"><div class="pokemon-name">{p_data["ko_name"]}</div><div class="type-badge">{p_data["en_name"]} | {p_data["type"]}</div><div class="info-box"><span class="info-label">⚡ 주요 특징</span>{p_data["traits"]}</div><div class="info-box"><span class="info-label">💛 {selected_mbti} 타입과의 매칭 이유</span>{p_data["reason"]}</div></div>'''
+        
+        st.markdown(html_content, unsafe_allow_html=True)
