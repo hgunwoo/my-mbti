@@ -203,3 +203,57 @@ POKEMON_DATA = {
     "ESTJ": {
         "ko_name": "윈디",
         "en_name": "Arcanine",
+        "type": "불꽃 (Fire)",
+        "image": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/59.png",
+        "traits": "위풍당당한 기품과 위엄을 갖추고 직진하는 신의 깊은 포켓몬입니다.",
+        "reason": "조직적이고 결단력 있게 과업을 완수하는 ESTJ의 듬직함을 빼닮았습니다. 명확한 질서와 충성심으로 든든하게 곁을 지켜주는 파트너입니다."
+    }
+}
+
+# 3. 화면 레이아웃 및 UX 구현
+st.markdown('<div class="title-text">⚡ MBTI x 포켓몬 단짝 찾기 ⚡</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle-text">나의 MBTI를 선택하고 어울리는 단짝 포켓몬을 만나보세요!</div>', unsafe_allow_html=True)
+
+# MBTI 선택 박스
+mbti_list = list(POKEMON_DATA.keys())
+selected_mbti = st.selectbox(
+    "👇 당신의 MBTI 유형을 선택해 주세요:",
+    options=mbti_list,
+    index=0
+)
+
+# 단짝 찾기 버튼
+if st.button("✨ 내 단짝 포켓몬 찾아보기 ✨", use_container_width=True):
+    # 1) 축하 애니메이션 효과
+    st.balloons()
+    
+    # 선택된 데이터 가져오기
+    p_data = POKEMON_DATA[selected_mbti]
+    
+    # 결과 화면 출력
+    st.markdown("---")
+    
+    col1, col2 = st.columns([1, 1.2])
+    
+    with col1:
+        # 포켓몬 고화질 이미지 출력
+        st.image(p_data["image"], use_container_width=True)
+        
+    with col2:
+        # 상세 특징 및 어울리는 이유 설명 카드
+        st.markdown(f'''
+        <div class="pokemon-card">
+            <div class="pokemon-name">{p_data["ko_name"]}</div>
+            <div class="pokemon-sub"><b>영문명:</b> {p_data["en_name"]} | <b>타입:</b> {p_data["type"]}</div>
+            <hr style="border: 0.5px solid #FFE58F; margin: 15px 0;">
+            <div class="info-text">
+                <b>📌 주요 특징:</b><br>
+                {p_data["traits"]}
+            </div>
+            <br>
+            <div class="info-text">
+                <b>💛 {selected_mbti}와 잘 어울리는 이유:</b><br>
+                {p_data["reason"]}
+            </div>
+        </div>
+        ''', unsafe_allow_html=True)
