@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MBTI × 포켓몬 매칭</title>
+  <style>
+    /* Reset & Clean Font Import */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    :root {
+      --bg-gradient: linear-gradient(135deg, #FFFDF9 0%, #F7F1E5 100%);
+      --card-bg: #FFFFFF;
+      --primary: #FFB800;
+      --primary-hover: #FFA800;
+      --text-main: #2D2926;
+      --text-sub: #7D7873;
+      --accent-orange: #FF7A00;
+      --badge-bg: #FFF3D6;
+      --badge-text: #D97706;
+      --border-subtle: #EFE9DE;
+      --shadow-soft: 0 20px 40px -15px rgba(180, 150, 110, 0.15);
+      --radius: 28px;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 24px 16px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient Floating Particles */
+    .bg-particle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 184, 0, 0.15);
+      pointer-events: none;
+      animation: floatBg 12s infinite linear;
+      z-index: 0;
+    }
+
+    .particle-1 { width: 120px; height: 120px; top: 10%; left: 8%; animation-duration: 14s; }
+    .particle-2 { width: 180px; height: 180px; bottom: 12%; right: 6%; animation-duration: 18s; animation-delay: -5s; }
+    .particle-3 { width: 80px; height: 80px; bottom: 25%; left: 15%; animation-duration: 10s; animation-delay: -2s; }
+
+    @keyframes floatBg {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-25px) rotate(180deg); }
+      100% { transform: translateY(0) rotate(360deg); }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 540px;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+      padding: 40px 32px;
+      border: 1px solid var(--border-subtle);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* Header Animation */
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+      animation: titleBounce 2s infinite ease-in-out;
+    }
+
+    @keyframes titleBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    header p {
+      font-size: 1rem;
+      color: var(--text-sub);
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    /* Screen Sections Toggle & Animations */
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+      animation: zoomIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes zoomIn {
+      from { 
+        opacity: 0; 
+        transform: scale(0.92) translateY(10px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: scale(1) translateY(0); 
+      }
+    }
+
+    /* MBTI Grid & Staggered Animations */
+    .mbti-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .mbti-btn {
+      background-color: #FAFAFA;
+      border: 1.5px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 16px 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      opacity: 0;
+      animation: btnAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes btnAppear {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .mbti-btn:hover {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: #FFFFFF;
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 12px 20px -6px rgba(255, 184, 0, 0.5);
+    }
+
+    .mbti-btn:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+
+    /* Result View & Rich Dynamic Animations */
+    .result-wrapper {
+      text-align: center;
+    }
+
+    .mbti-pill {
+      display: inline-block;
+      background-color: var(--badge-bg);
+      color: var(--badge-text);
+      font-weight: 700;
+      padding: 6px 18px;
+      border-radius: 100px;
+      font-size: 0.95rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 20px;
+      animation: popIn 0.5s 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+
+    .pokemon-avatar {
+      font-size: 5.5rem;
+      line-height: 1;
+      margin-bottom: 16px;
+      display: inline-block;
+      filter: drop-shadow(0 12px 18px rgba(0,0,0,0.08));
+      animation: avatarPop 0.6s 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) both, floatPokemon 3s 0.8s ease-in-out infinite alternate;
+    }
+
+    @keyframes avatarPop {
+      0% { opacity: 0; transform: scale(0) rotate(-180deg); }
+      70% { transform: scale(1.2) rotate(10deg); }
+      100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+
+    @keyframes floatPokemon {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(-12px) rotate(3deg); }
+    }
+
+    .pokemon-title {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+      animation: fadeInUp 0.5s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .description-card {
+      background: #FAF8F5;
+      border-radius: 20px;
+      padding: 24px;
+      text-align: left;
+      margin-bottom: 20px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+      animation: fadeInUp 0.5s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+      transition: transform 0.3s ease;
+    }
+
+    .description-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .description-card p {
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: #4A4540;
+      font-weight: 400;
+      word-break: keep-all;
+    }
+
+    .chemistry-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background-color: #FFF6F0;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 32px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent-orange);
+      animation: fadeInUp 0.5s 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .chemistry-card .heart-icon {
+      display: inline-block;
+      animation: heartBeat 1.2s infinite ease-in-out;
+    }
+
+    @keyframes heartBeat {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.3); }
+      50% { transform: scale(1); }
+      75% { transform: scale(1.2); }
+    }
+
+    .chemistry-card span.highlight {
+      font-weight: 800;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* Animated Primary Action Button */
+    .btn-action {
+      width: 100%;
+      background-color: var(--text-main);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 18px;
+      padding: 18px 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 20px -5px rgba(45, 41, 38, 0.2);
+      animation: fadeInUp 0.5s 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .btn-action:hover {
+      background-color: #423D39;
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 15px 25px -5px rgba(45, 41, 38, 0.3);
+    }
+
+    .btn-action:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes popIn {
+      from {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Mobile Responsive Customization */
+    @media (max-width: 480px) {
+      .container {
+        padding: 32px 20px;
+        border-radius: 24px;
+      }
+
+      header h1 {
+        font-size: 1.5rem;
+      }
+
+      .mbti-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+      }
+
+      .mbti-btn {
+        padding: 14px 0;
+        font-size: 0.95rem;
+      }
+
+      .pokemon-avatar {
+        font-size: 4.8rem;
+      }
+
+      .pokemon-title {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Animated Particles -->
+  <div class="bg-particle particle-1"></div>
+  <div class="bg-particle particle-2"></div>
+  <div class="bg-particle particle-3"></div>
+
+  <div class="container">
+    <!-- 1. 메인 선택 화면 -->
+    <div id="selection-screen" class="section active">
+      <header>
+        <h1>MBTI × 포켓몬</h1>
+        <p>당신의 성격 유형에 어울리는<br>포켓몬을 만나보세요</p>
+      </header>
+      <div class="mbti-grid" id="mbti-grid">
+        <!-- 자바스크립트로 버튼 순차적 생동감 있는 애니메이션 적용 -->
+      </div>
+    </div>
+
+    <!-- 2. 결과 화면 -->
+    <div id="result-screen" class="section">
+      <div class="result-wrapper">
+        <div class="mbti-pill" id="res-mbti">MBTI</div>
+        <br>
+        <div class="pokemon-avatar" id="res-emoji">❓</div>
+        <h2 class="pokemon-title" id="res-name">포켓몬 이름</h2>
+        
+        <div class="description-card">
+          <p id="res-reason">성격에 맞는 포켓몬 매칭 이유 설명이 출력되는 구간입니다.</p>
+        </div>
+
+        <div class="chemistry-card">
+          <span class="heart-icon">❤️</span>
+          <span>환상의 궁합:</span>
+          <span class="highlight" id="res-chemistry">-</span>
+        </div>
+
+        <button class="btn-action" onclick="showSelectionScreen()">다시 테스트하기</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 16가지 MBTI & 포켓몬 매칭 데이터
+    const pokemonData = {
+      "ISTJ": {
+        name: "거북왕",
+        emoji: "🐢",
+        reason: "원칙을 지키며 강한 책임감을 가진 당신은 단단한 껍질처럼 신뢰감을 주는 거북왕과 닮았습니다. 어떠한 상황에서도 흔들리지 않고 주어진 맡은 바를 완벽하게 해냅니다.",
+        bestMatch: "ESFP"
+      },
+      "ISFJ": {
+        name: "해피너스",
+        emoji: "🥚",
+        reason: "배려심이 깊고 타인의 필요를 먼저 챙기는 성향은 평화와 상처 치유를 전하는 해피너스와 조화를 이룹니다. 언제나 곁에 있는 사람들에게 따뜻한 위안이 되어 줍니다.",
+        bestMatch: "ESTP"
+      },
+      "INFJ": {
+        name: "뮤",
+        emoji: "🔮",
+        reason: "깊은 통찰력과 자신만의 철학을 간직한 모습은 신비롭고 영리한 뮤와 꼭 맞습니다. 조용하지만 내면에 신념과 남다른 직관을 가득 품고 있습니다.",
+        bestMatch: "ENFP"
+      },
+      "INTJ": {
+        name: "후딘",
+        emoji: "🥄",
+        reason: "논리적이고 명확한 전략으로 목표를 달성하는 모습은 뛰어난 지능의 대명사인 후딘을 연상시킵니다. 치밀한 분석력을 바탕으로 어떤 난제든 명쾌하게 해결합니다.",
+        bestMatch: "ENTP"
+      },
+      "ISTP": {
+        name: "루카리오",
+        emoji: "🐺",
+        reason: "상황을 차분하게 파악하고 절제된 효율성을 추구하는 당신은 실전 감각이 뛰어난 루카리오와 닮았습니다. 조용하지만 강렬한 카리스마로 핵심을 꿰뚫습니다.",
+        bestMatch: "ESFJ"
+      },
+      "ISFP": {
+        name: "잠만보",
+        emoji: "🐻",
+        reason: "여유를 즐길 줄 알고 자유로운 영혼을 가진 온화한 평화주의자로서 잠만보의 편안함과 이어집니다. 무리한 경쟁보다는 자신만의 따뜻한 속도로 삶을 채워갑니다.",
+        bestMatch: "ENFJ"
+      },
+      "INFP": {
+        name: "이브이",
+        emoji: "🦊",
+        reason: "풍부한 감수성과 무궁무진한 가능성을 품고 있는 인프피는 다채로운 모습으로 성장하는 이브이와 흡사합니다. 마음속 깊은 진정성을 소중히 가꾸어 갑니다.",
+        bestMatch: "ENTJ"
+      },
+      "INTP": {
+        name: "폴리곤",
+        emoji: "🤖",
+        reason: "창의적이고 구조적인 사고를 통해 독창적인 시각을 제시하는 호기심 천국으로, 혁신적인 폴리곤과 어울립니다. 남들과 다른 참신한 관점으로 세상을 탐구합니다.",
+        bestMatch: "ESTJ"
+      },
+      "ESTP": {
+        name: "피카츄",
+        emoji: "⚡",
+        reason: "순발력이 탁월하며 도전을 망설이지 않는 개척자 정신은 통통 튀는 피카츄의 에너지를 닮았습니다. 어떤 곳에서든 특유의 밝은 매력으로 분위기를 압도합니다.",
+        bestMatch: "ISFJ"
+      },
+      "ESFP": {
+        name: "푸린",
+        emoji: "🎤",
+        reason: "어디서나 스포트라이트를 받는 유쾌함과 당당한 매력은 스타성을 가진 푸린과 완벽하게 매칭됩니다. 주변 사람들에게 매번 새로운 즐거움과 환희를 선사합니다.",
+        bestMatch: "ISTJ"
+      },
+      "ENFP": {
+        name: "토게피",
+        emoji: "🐣",
+        reason: "아이 같은 순수함과 무한한 긍정 에너지를 품고 주변에 행복을 퍼뜨리는 토게피의 상징입니다. 신선한 아이디어로 만나는 사람마다 입가에 미소를 만듭니다.",
+        bestMatch: "INFJ"
+      },
+      "ENTP": {
+        name: "팬텀",
+        emoji: "👻",
+        reason: "재치 넘치는 입담과 허를 찌르는 반전 유머 감각을 소유한 개구쟁이 리더 팬텀의 모습입니다. 고정관념을 깨부수는 솔직하고 통쾌한 해결사 역할을 즐깁니다.",
+        bestMatch: "INTJ"
+      },
+      "ESTJ": {
+        name: "윈디",
+        emoji: "🦁",
+        reason: "책임감과 주도적인 리더십으로 사람들을 당당하게 끌어주는 당신은 신뢰의 아이콘 윈디입니다. 확실한 목표 의식과 강한 실행력으로 믿음을 전합니다.",
+        bestMatch: "INTP"
+      },
+      "ESFJ": {
+        name: "망나뇽",
+        emoji: "🐉",
+        reason: "다정다감한 성격으로 주변을 챙기는 친근함과 든든함은 따뜻한 수호자 망나뇽을 닮았습니다. 타인의 필요에 세심하게 귀를 기울이며 연대감을 높여줍니다.",
+        bestMatch: "ISTP"
+      },
+      "ENFJ": {
+        name: "가디안",
+        emoji: "🧚",
+        reason: "타인의 감정에 높은 공감대를 드러내며 올바른 방향으로 이끌어 주는 정신은 가디안의 충심과 이어집니다. 선한 영향력을 펼치며 이상적인 가치를 실천합니다.",
+        bestMatch: "ISFP"
+      },
+      "ENTJ": {
+        name: "리자몽",
+        emoji: "🔥",
+        reason: "높은 포부와 불꽃같은 열정으로 선두에서 도전을 이어가는 리더로서 리자몽과 완벽히 겹쳐집니다. 어떠한 난관도 거침없는 결단력으로 헤쳐 나갑니다.",
+        bestMatch: "INFP"
+      }
+    };
+
+    const mbtiList = [
+      "ISTJ", "ISFJ", "INFJ", "INTJ",
+      "ISTP", "ISFP", "INFP", "INTP",
+      "ESTP", "ESFP", "ENFP", "ENTP",
+      "ESTJ", "ESFJ", "ENFJ", "ENTJ"
+    ];
+
+    // MBTI 선택 그리드 생성 (순차적 애니메이션 딜레이 부여)
+    function initGrid() {
+      const grid = document.getElementById('mbti-grid');
+      grid.innerHTML = '';
+      mbtiList.forEach((mbti, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'mbti-btn';
+        btn.textContent = mbti;
+        // 순차적으로 튀어나오는 stagger 효과
+        btn.style.animationDelay = `${index * 0.03}s`;
+        btn.onclick = () => selectMBTI(mbti);
+        grid.appendChild(btn);
+      });
+    }
+
+    // 결과 출력
+    function selectMBTI(mbti) {
+      const data = pokemonData[mbti];
+      if (!data) return;
+
+      document.getElementById('res-mbti').textContent = mbti;
+      document.getElementById('res-emoji').textContent = data.emoji;
+      document.getElementById('res-name').textContent = data.name;
+      document.getElementById('res-reason').textContent = data.reason;
+      document.getElementById('res-chemistry').textContent = data.bestMatch;
+
+      const selectionScreen = document.getElementById('selection-screen');
+      const resultScreen = document.getElementById('result-screen');
+
+      selectionScreen.classList.remove('active');
+      
+      // 결과 화면 초기화 후 재활성화로 애니메이션 트리거
+      resultScreen.classList.remove('active');
+      void resultScreen.offsetWidth; // Reflow 트리거
+      resultScreen.classList.add('active');
+    }
+
+    // 메인으로 돌아가기
+    function showSelectionScreen() {
+      const selectionScreen = document.getElementById('selection-screen');
+      const resultScreen = document.getElementById('result-screen');
+
+      resultScreen.classList.remove('active');
+      
+      // 그리드 재배치 및 애니메이션 재실행
+      initGrid();
+      selectionScreen.classList.remove('active');
+      void selectionScreen.offsetWidth; // Reflow 트리거
+      selectionScreen.classList.add('active');
+    }
+
+    // 초기화 실행
+    window.onload = initGrid;
+  </script>
+</body>
+</html>
