@@ -1,10 +1,10 @@
 import streamlit as st
 
-# 1. 페이지 기본 설정
+# 1. 페이지 기본 설정 (넓은 화면 레이아웃 적용)
 st.set_page_config(
     page_title="MBTI x POKÉMON | 단짝 찾기",
     page_icon="⚡",
-    layout="centered"
+    layout="wide"
 )
 
 # 2. 다크 & 세련된 네온 글래스모피즘 CSS 스타일 정의
@@ -20,25 +20,25 @@ st.markdown("""
     /* 포켓몬 로고 컨테이너 */
     .logo-container {
         text-align: center;
-        margin-top: 10px;
-        margin-bottom: 10px;
+        margin-top: 5px;
+        margin-bottom: 5px;
     }
     
     .logo-img {
-        max-width: 280px;
+        max-width: 260px;
         filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.4));
     }
     
     /* 서브 타이틀 */
     .hero-subtitle {
-        font-size: 1.2rem !important;
+        font-size: 1.15rem !important;
         color: #9CA3AF;
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1.8rem;
         font-weight: 400;
     }
 
-    /* 프리미엄 다크 글래스 카드 */
+    /* 프리미엄 다크 글래스 메인 카드 */
     .pokemon-card {
         background: rgba(22, 27, 38, 0.85);
         border: 1px solid rgba(245, 158, 11, 0.35);
@@ -50,7 +50,7 @@ st.markdown("""
 
     /* 포켓몬 이름 */
     .pokemon-name {
-        font-size: 2.3rem !important;
+        font-size: 2.2rem !important;
         font-weight: 900;
         color: #FFFFFF;
         letter-spacing: -0.5px;
@@ -63,11 +63,11 @@ st.markdown("""
         background: rgba(245, 158, 11, 0.15);
         color: #FBBF24;
         border: 1px solid rgba(245, 158, 11, 0.4);
-        padding: 6px 16px;
+        padding: 5px 15px;
         border-radius: 50px;
         font-size: 0.95rem;
         font-weight: 600;
-        margin-bottom: 18px;
+        margin-bottom: 16px;
     }
 
     /* 본문 텍스트 박스 */
@@ -76,7 +76,7 @@ st.markdown("""
         border-left: 4px solid #F59E0B;
         padding: 14px 18px;
         border-radius: 10px;
-        font-size: 1.08rem !important;
+        font-size: 1.05rem !important;
         line-height: 1.65;
         color: #E5E7EB;
         margin-top: 12px;
@@ -89,9 +89,34 @@ st.markdown("""
         display: block;
     }
 
+    /* 양옆 공통 사이드 카드 스타일 */
+    .side-card {
+        background: rgba(17, 24, 39, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        padding: 20px;
+        text-align: center;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .side-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #FBBF24;
+        margin-bottom: 12px;
+    }
+
+    .side-desc {
+        font-size: 0.92rem;
+        color: #9CA3AF;
+        line-height: 1.5;
+        margin-top: 10px;
+    }
+
     /* 입력 폼 라벨 및 선택 상자 다크 커스텀 */
     label {
-        font-size: 1.2rem !important;
+        font-size: 1.15rem !important;
         font-weight: 700 !important;
         color: #F3F4F6 !important;
         margin-bottom: 8px !important;
@@ -108,7 +133,7 @@ st.markdown("""
     .stButton > button {
         background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
         color: #000000 !important;
-        font-size: 1.25rem !important;
+        font-size: 1.2rem !important;
         font-weight: 800 !important;
         border-radius: 14px !important;
         border: none !important;
@@ -255,41 +280,67 @@ POKEMON_DATA = {
     }
 }
 
-# 4. 앱 헤더 레이아웃 (포켓몬 로고 포함)
-st.markdown('''
-    <div class="logo-container">
-        <img class="logo-img" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" style="width: 32px; vertical-align: middle; margin-right: 8px;">
-        <img class="logo-img" src="https://upload.wikimedia.org/wikipedia/commons/9/98/International_Pok%C3%A9mon_logo.svg" alt="Pokémon Logo">
-    </div>
-''', unsafe_allow_html=True)
+# 4. 3컬럼 화면 레이아웃 (왼쪽 공용아트 | 중앙 메인컨텐츠 | 오른쪽 공용아트)
+left_side, main_center, right_side = st.columns([1, 2.2, 1])
 
-st.markdown('<div class="hero-subtitle">나만의 성향(MBTI)과 완벽하게 어울리는 포켓몬 파트너를 찾아보세요!</div>', unsafe_allow_html=True)
+# --- [왼쪽 공용 포켓몬 영역] ---
+with left_side:
+    st.markdown('''
+        <div class="side-card">
+            <div class="side-title">⭐ STARTER POKÉMON</div>
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" style="width: 85%; margin: 10px 0;">
+            <div class="side-desc">
+                <b>모험의 시작을 함께하는 단짝들!</b><br>
+                피카츄, 파이리, 꼬북이, 이상해씨처럼 각기 다른 매력을 지닌 포켓몬들이 당신을 기다립니다.
+            </div>
+        </div>
+    ''', unsafe_allow_html=True)
 
-# MBTI 드롭다운 선택
-mbti_list = list(POKEMON_DATA.keys())
-selected_mbti = st.selectbox(
-    "SELECT YOUR MBTI TYPE",
-    options=mbti_list,
-    index=0
-)
+# --- [중앙 메인 컨텐츠 영역] ---
+with main_center:
+    # 포켓몬 공식 로고
+    st.markdown('''
+        <div class="logo-container">
+            <img class="logo-img" src="https://upload.wikimedia.org/wikipedia/commons/9/98/International_Pok%C3%A9mon_logo.svg" alt="Pokémon Logo">
+        </div>
+    ''', unsafe_allow_html=True)
 
-st.write("") # 여백
+    st.markdown('<div class="hero-subtitle">나만의 성향(MBTI)과 완벽하게 어울리는 포켓몬 파트너를 찾아보세요!</div>', unsafe_allow_html=True)
 
-# 단짝 찾기 버튼
-if st.button("✨ 단짝 포켓몬 매칭하기 ✨", use_container_width=True):
-    # 축하 애니메이션
-    st.balloons()
-    
-    p_data = POKEMON_DATA[selected_mbti]
-    
-    # 결과 그리드 출력
-    col1, col2 = st.columns([1, 1.1])
-    
-    with col1:
-        st.image(p_data["image"], use_container_width=True)
+    # MBTI 드롭다운 선택
+    mbti_list = list(POKEMON_DATA.keys())
+    selected_mbti = st.selectbox(
+        "SELECT YOUR MBTI TYPE",
+        options=mbti_list,
+        index=0
+    )
+
+    st.write("")
+
+    # 단짝 찾기 버튼
+    if st.button("✨ 단짝 포켓몬 매칭하기 ✨", use_container_width=True):
+        st.balloons()
         
-    with col2:
-        # HTML 태그 사이의 불필요한 줄바꿈을 없애 깨짐 현상 방지
-        html_content = f'''<div class="pokemon-card"><div class="pokemon-name">{p_data["ko_name"]}</div><div class="type-badge">{p_data["en_name"]} | {p_data["type"]}</div><div class="info-box"><span class="info-label">⚡ 주요 특징</span>{p_data["traits"]}</div><div class="info-box"><span class="info-label">💛 {selected_mbti} 타입과의 매칭 이유</span>{p_data["reason"]}</div></div>'''
+        p_data = POKEMON_DATA[selected_mbti]
         
-        st.markdown(html_content, unsafe_allow_html=True)
+        col1, col2 = st.columns([1, 1.1])
+        
+        with col1:
+            st.image(p_data["image"], use_container_width=True)
+            
+        with col2:
+            html_content = f'''<div class="pokemon-card"><div class="pokemon-name">{p_data["ko_name"]}</div><div class="type-badge">{p_data["en_name"]} | {p_data["type"]}</div><div class="info-box"><span class="info-label">⚡ 주요 특징</span>{p_data["traits"]}</div><div class="info-box"><span class="info-label">💛 {selected_mbti} 타입과의 매칭 이유</span>{p_data["reason"]}</div></div>'''
+            st.markdown(html_content, unsafe_allow_html=True)
+
+# --- [오른쪽 공용 포켓몬 영역] ---
+with right_side:
+    st.markdown('''
+        <div class="side-card">
+            <div class="side-title">🔮 LEGENDARY MATCH</div>
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/151.png" style="width: 85%; margin: 10px 0;">
+            <div class="side-desc">
+                <b>16가지 MBTI 성향 스펙트럼</b><br>
+                당신의 고유한 개성과 주파수가 일치하는 전설 & 환상의 포켓몬 단짝을 지금 바로 확인해보세요.
+            </div>
+        </div>
+    ''', unsafe_allow_html=True)
